@@ -2,16 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      DB_HOST: localhost  # Ou "mariadb-service" si déployé dans Kubernetes
-      DB_PORT: 3306
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v3
@@ -38,13 +34,3 @@ jobs:
 
       - name: Push Image
         run: docker push ghcr.io/sarahzahiac/todo-app:${{ github.sha }}
-
-      - name: Deploy to Kubernetes
-        env:
-          DB_HOST: localhost  # Ou mariadb-service
-          DB_PORT: 3306
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          kubectl apply -f deployment.yaml
-          kubectl apply -f storageApp.yaml
-          kubectl apply -f storageDB.yaml
