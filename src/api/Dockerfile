@@ -1,15 +1,20 @@
-FROM maven:3.9.6-eclipse-temurin-17 AS build
-#une image avec Maven + Java 17 pour compiler.
-WORKDIR /app
-COPY . .
+# Utiliser une image de base pour le build Maven
+FROM maven:3.9.11-eclipse-temurin-17 AS build
 
-#On met tout ton projet dans /app.
-RUN mvn clean package -DskipTests
+# vos commandes de build ici
+WORKDIR /build
 
+COPY src/api/pom.xml .
+RUN ["mvn", "dependency:resolve", "-U"]
+
+COPY /src/api/src ./src
+RUN ["mvn", "clean", "package", "-DskipTests"]
+
+# Image finale pour l’excution
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-#Image très légère pour exécuter Java.
-COPY --from=build /app/target/*.jar app.jar
-#le JAR compilé dans l’image finale.
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# vos commandes d’execution ici
+COPY --from=build /build/target/*.jar /app/*.jar
+ENTRYPOINT ["java", "-jar", "/app/*.jar"]
