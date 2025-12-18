@@ -33,3 +33,6 @@ jobs:
 
       - name: Push Image
         run: docker push ghcr.io/sarahzahiac/todo-app:${{ github.sha }}
+
+    env:
+      ACTIONS_STEP_DEBUG: true
