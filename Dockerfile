@@ -3,6 +3,9 @@ FROM maven:3.9.11-eclipse-temurin-21 AS build
 
 WORKDIR /build
 
+ENV JAVA_HOME=/opt/java/openjdk-21
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
 COPY src/api/pom.xml .
 RUN ["mvn", "dependency:resolve", "-U"]
 
